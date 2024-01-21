@@ -1,35 +1,67 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import Axios from 'axios';
 
-function App() {
-  const [count, setCount] = useState(0)
+interface Props { }
+const App: React.FC<Props> = () => {
+	const [name, setName] = useState<string | null>()
+	const [review, setReview] = useState<string | null>()
+	const [reviewList, setReviewList] = useState<any[]>()
+	console.log("🚀 ~ reviewList:", reviewList)
+	
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+	const submitReview = () => {
+		Axios.post("http://localhost:3001/api/insert", {
+			reviewer: name,
+			reviewText: review
+		})
+		.then(() => {
+			console.log("success")
+		})
+	}
 
-export default App
+	useEffect(() => {
+		Axios.get("http://localhost:3001/api/get")
+		.then((res) => {
+			setReviewList(res.data)
+		})
+	}, [])
+
+	return (
+		<>
+			<div className="flex flex-col justify-center items-center">
+				<h1 className="">Review for Hannah</h1>
+				<div className="h-1/2 w-1/2 flex flex-col items-center gap-2">
+					<label>Name</label>
+					<input
+						type="text"
+						name="Name"
+						className="h-[20px] border-black border-2"
+						onChange={(e) => setName(e.target.value)}
+					/>
+					<label>Review</label>
+					<input
+						type="text"
+						name="review"
+						className="h-[20px] border-black border-2"
+						onChange={(e) => setReview(e.target.value)}
+
+					/>
+					<button onClick={() =>submitReview()}>Submit</button>
+					{reviewList && (
+						reviewList.map((review: any, index: number) => {
+							return (
+								<div key={index} className="flex flex-col items-center gap-2">
+									<p>{review.reviewer}</p>
+									<p>{review.reviewText}</p>
+								</div>
+							)
+						})
+					)}
+					
+				</div>
+			</div>
+		</>
+	);
+};
+
+export default App;
