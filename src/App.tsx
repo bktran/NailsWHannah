@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Axios from 'axios';
 import ReviewList from './ReviewList';
 import { Review } from './interface';
+import MainPage from './MainPage';
 
 interface Props { }
 
@@ -102,6 +103,8 @@ const App: React.FC<Props> = () => {
 					setNewReview={setNewReview}
 					reviewList={reviewList}
 				/>
+
+				<MainPage />
 			</div>
 		</>
 	);
